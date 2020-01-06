@@ -6,4 +6,5 @@ class CreateUsers < ActiveRecord::Migration[5.0]
       t.string :password
       t.integer :favorite_number
     end
+  end
 end

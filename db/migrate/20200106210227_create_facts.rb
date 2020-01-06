@@ -6,5 +6,6 @@ class CreateFacts < ActiveRecord::Migration[5.0]
       t.integer :number
       t.string :year, :default => nil
       t.integer :count
+    end
   end
 end
