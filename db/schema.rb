@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20200106210227) do
     t.string  "name"
     t.string  "username"
     t.string  "password"
-    t.integer "favorite_number"
+    t.integer "birth_year"
   end
 
 end
