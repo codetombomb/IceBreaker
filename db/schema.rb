@@ -12,6 +12,11 @@
 
 ActiveRecord::Schema.define(version: 20200106210227) do
 
+  create_table "fact_users", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "fact_id"
+  end
+
   create_table "facts", force: :cascade do |t|
     t.string  "text"
     t.string  "type"
@@ -25,11 +30,6 @@ ActiveRecord::Schema.define(version: 20200106210227) do
     t.string  "username"
     t.string  "password"
     t.integer "favorite_number"
-  end
-
-  create_table "users_facts", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "fact_id"
   end
 
 end

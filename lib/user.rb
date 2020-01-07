@@ -1,4 +1,4 @@
 class User < ActiveRecord::Base
-    has_many :users_facts
-    has_many :facts, through: :users_facts
+    has_many :fact_users
+    has_many :facts, through: :fact_users
 end
