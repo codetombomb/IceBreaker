@@ -1,82 +1,111 @@
 class IceBreaker
+  PROMPT = TTY::Prompt.new
+
+             #WELCOME TO ICEBREAKER!!
+    def intro
+        puts "\n" * 30
+        print "\s" * 42, "Welcome to".light_yellow.bold
+        puts "\n" * 2
+        puts " 
+             _______                  ______                    __               
+            |_     _|.----.-----.    |   __ |.----.-----.---.-.|  |--.-----.----.
+             _|   |_ |  __|  -__|    |   __ <|   _|  -__|  _  ||    <|  -__|   _|
+            |_______||____|_____|    |______/|__| |_____|___._||__|__|_____|__|  
+                                                                           ".               light_cyan.   bold
+        puts "\n" * 10                                              
+        y_n_question = PROMPT.yes?("\n\n\nAre you new to Icebreaker?") do |q|
+           q.suffix 'Y/N'
+         end
+       if y_n_question 
+           about
+       elsif
+           y_n_question == false
+           main           
+       end
+    end
+
+    
+
+    def about
+        puts "\n" * 30
+        puts "\sIceBreaker will give you facts\n\sbased on numbers that you can use to\n start a conversation with someone.".light_cyan
+        puts "\n" * 2
+        sign_up = PROMPT.select("SignUP or Exit", %w(SignUP Exit))
+        case sign_up
+        when "SignUP"
+            create_user
+        when "Exit"
+            exit
+        end
+    end    
+    
+    
+    
+    
+    
+    
+    def create_user
+      puts 'Create a new User Name'
+      username = gets.chomp
+      
+    end
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     def main
-        puts "1. My IceBreakers"
-        puts "2. Change my Username"
-        puts "3. Change my Password"
-        puts "Please select from menu:"
-        menu_selection = gets.chomp
-        if menu_selection == 1 
-            #Returns all of users facts with number, number type, and text.
-        elsif menu_selection == 2
-            #Utilize the User.name= method to change username
-        elsif menu_selection == 3
-            #Utilize the User.password= method to change username
-        end
-    end
+        # prompt = TTY::Prompt.new
 
-    def yes
-        prompt = TTY::Prompt.new
-        puts "\nIceBreaker will give you facts based on numbers\nthat you can use to start a conversation with someone.\n\n".light_magenta
-        sign_up = prompt.multi_select("SignUP or Exit".light_yellow, %w(SignUP Exit))
-        if sign_up == ["SignUP"]
-            puts "Enter New Username".light_yellow
-            new_username = gets.chomp
-            binding.pry
-        else
-            #needs to quit app and not go to main
-            greet
-        end
-    end
-
-
-
+        menu_selection = prompt.select("Select from the following options?", %w(MyIceBreakers Change--MyUsername Change--MyPassword Exit))
+        
         # binding.pry
-    #     if User.find_by(username: new_username)
-    #         puts "That user name already exists! Please try again:" 
-    #         yes
-    #     else 
-    #         new_user = User.new
-    #         new_user.username = new_username
-    #         new_user.save                      
-    #     end               
-    #     puts "Enter your password:"
-    #     new_user_password = gets.chomp
-    #     #After password is entered, confirm password.
-    #     puts "Enter your birth_year:"
-    #     birth_year = gets.chomp
-    #     #Check to make sure that the year entered is valid
-    #     #Get fact about year entered and then redirected to the mainmenu
-    #     main
-    # end
-
-    
-    #***********************************************************************
-                        #WELCOME TO ICEBREAKER!!
-
-def greet
-    prompt = TTY::Prompt.new
-    puts "Welcome to".light_blue
-    puts " 
-         _______                  ______                    __               
-        |_     _|.----.-----.    |   __ |.----.-----.---.-.|  |--.-----.----.
-         _|   |_ |  __|  -__|    |   __ <|   _|  -__|  _  ||    <|  -__|   _|
-        |_______||____|_____|    |______/|__| |_____|___._||__|__|_____|__|  
-                                                                        ".light_blue.bold
-    
- 
-    puts 'Are you new to IceBreaker?'.light_yellow
-    y_n_question = prompt.multi_select("Yes or No?", %w(Yes No Exit))
-
-    # binding.pry
-    if y_n_question == ["Yes"]
-        yes
-    elsif
-        y_n_question == ["No"]
-        main
-    else
-        y_n_question == ["Exit"]   
-         greet               
+        case menu_selection
+        when "MyIceBreakers"
+            # Returns all of users facts with number, number type, and text.
+            # Need ability to store facts Ive looked up
+        when "Change--MyUsername"
+        #     Utilize the User.name= method to change username
+        when "Change--MyPassword"
+        #     Utilize the User.password= method to change username
+        when "Exit"
+           exit
+        end
     end
-end 
+
+
+    def exit
+        puts "\n" * 20
+        print "\s" * 21,"Now go meet someone new!".light_yellow
+        puts "\n"
+        puts "                                                
+             _____ _____ _____ ____  _____ __ __ _____ 
+            |   __|     |     |     | __  |  |  |   __|
+            |  |  |  |  |  |  |  |  | __ -|_   _|   __|
+            |_____|_____|_____|____/|_____| |_| |_____|
+                                        ".light_cyan.bold
+        puts "\n" * 10             
+    end
+
+
 end
