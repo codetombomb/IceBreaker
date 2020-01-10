@@ -1,10 +1,11 @@
 class IceBreaker
-  PROMPT = TTY::Prompt.new
+    attr_reader :logged_in_user
+                          #WELCOME TO ICEBREAKER!!
 
-             #WELCOME TO ICEBREAKER!!
+             ###########   MAIN ICEBREAKER METHODS   ###########
     def intro
         puts "\n" * 30
-        print "\s" * 42, "Welcome to".light_yellow.bold
+        print "\s" * 42, "WELCOME TO".light_yellow.bold
         puts "\n" * 2
         puts " 
              _______                  ______                    __               
@@ -13,90 +14,63 @@ class IceBreaker
             |_______||____|_____|    |______/|__| |_____|___._||__|__|_____|__|  
                                                                            ".               light_cyan.   bold
         puts "\n" * 10                                              
-        y_n_question = PROMPT.yes?("\n\n\nAre you new to Icebreaker?") do |q|
+        yes_or_no = PROMPT.yes?("\n\n\nAre you new to Icebreaker?") do |q|
            q.suffix 'Y/N'
          end
-       if y_n_question 
+       if yes_or_no 
            about
        elsif
-           y_n_question == false
-           main           
+            self.login          
        end
-    end
-
-    
+    end   
 
     def about
         puts "\n" * 30
-        puts "\sIceBreaker will give you facts\n\sbased on numbers that you can use to\n start a conversation with someone.".light_cyan
-        puts "\n" * 2
+        puts "\sIceBreaker WILL GIVE YOU FACTS\n\sBASED ON NUMBERS THAT YOU CAN USE\n TO START A CONVERSATION WITH SOMEONE NEW.".light_cyan
+        puts "\n" * 5
         sign_up = PROMPT.select("SignUP or Exit", %w(SignUP Exit))
         case sign_up
         when "SignUP"
-            create_user
-        when "Exit"
-            exit
+            User.create_user
+            IceBreaker.main
+        else "Exit"
+            IceBreaker.quit
         end
-    end    
+    end 
     
-    
-    
-    
-    
-    
-    def create_user
-      puts 'Create a new User Name'
-      username = gets.chomp
-      
+    def self.login
+        puts "\n" * 35
+        find_user = PROMPT.ask("What is your username?".light_cyan)
+        @logged_in_user = User.find_by(username: find_user)
+        self.main
     end
-
-
-
-
-
-
-
-
-
-
-
-
-
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    def main
-        # prompt = TTY::Prompt.new
-
-        menu_selection = prompt.select("Select from the following options?", %w(MyIceBreakers Change--MyUsername Change--MyPassword Exit))
-        
-        # binding.pry
+    def self.main
+        menu_selection = PROMPT.select("Select from the following options?", %w(Login MyIceBreakers Find_By_Year Random_Trivia Change_MyUsername Exit))
         case menu_selection
+        when "Login"
+            self.login
         when "MyIceBreakers"
             # Returns all of users facts with number, number type, and text.
             # Need ability to store facts Ive looked up
-        when "Change--MyUsername"
-        #     Utilize the User.name= method to change username
-        when "Change--MyPassword"
-        #     Utilize the User.password= method to change username
-        when "Exit"
-           exit
+            # Given the option to delete a specific Icebreaker
+            # Given the option to delete all IceBreakers
+        when "Find_By_Year"
+            # Parse the Random Fact Numbers API for fact
+            # Displays number and fact
+            # Given the option to save to MyIceBreakers
+        when "Random_Trivia"
+            # Given option to select type TRIVIA, MATH, DATE, YEAR
+        when "Change_MyUsername"
+            # Utilize the User.name= method to change username
+        else "Exit"
+           self.quit
         end
     end
 
-
-    def exit
+    def self.quit
         puts "\n" * 20
-        print "\s" * 21,"Now go meet someone new!".light_yellow
+        print "\s" * 25,"HAVE A GREAT DAY!".light_yellow
         puts "\n"
         puts "                                                
              _____ _____ _____ ____  _____ __ __ _____ 
@@ -105,7 +79,9 @@ class IceBreaker
             |_____|_____|_____|____/|_____| |_| |_____|
                                         ".light_cyan.bold
         puts "\n" * 10             
-    end
-
-
+    end 
 end
+
+
+
+    
