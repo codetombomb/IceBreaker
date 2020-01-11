@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20200106210227) do
 
   create_table "facts", force: :cascade do |t|
     t.string  "text"
-    t.string  "type"
+    t.string  "fact_type"
     t.integer "number"
     t.string  "year"
     t.integer "count"

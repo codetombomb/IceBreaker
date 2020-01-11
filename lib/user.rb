@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
             # binding.pry       
             if verify_date
             user_birthday = "#{birth_year},#{birth_month},#{birth_day}"
+            birthday_fact = Fact.get_date_fact(birth_month,birth_day)
 #GRAB DATE AND RETURN A STRING WITH 'DID YOU KNOW THAT THIS HAPPENED ON YOUR BDAY?' 
             new_user = User.new
             new_user.username = new_username
