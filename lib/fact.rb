@@ -13,9 +13,7 @@ class Fact < ActiveRecord::Base
             fact.fact_type = response.body["type"]
             fact.number = response.body["number"]
             fact.year = response.body["year"]
-        end
-        if new_fact == nil
-            self.get_date_fact
+        new_fact
         end
         binding.pry
     end
