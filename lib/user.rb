@@ -4,118 +4,106 @@ class User < ActiveRecord::Base
 
     #                                    #NEW USER SIGNUP
 #                 ##################CREATE USER METHODS##################
-#     #Date.valid_date?(year,month,day) 
-
+ 
+# CREATE USER 
     def self.create_user
         new_user = self.get_username
+        new_user.password = self.set_password
+        # binding.pry
         puts "\n" * 35
-        user_password = self.set_password
-        binding.pry
+        new_user.birthday = self.get_user_birthday
+        new_user.save
+        new_user
+    end  
+    def self.get_user_birthday
+        # puts "\n" * 35           
+        birth_year = self.get_birth_year.to_i
+        # binding.pry
+        birth_month = self.get_birth_month.to_i
+        # binding.pry
         puts "\n" * 35
-        yes_or_no = PROMPT.yes?("We can find IceBreakers about a date in history.\n\s Would you like to try with your birthday?\n\n\n".light_cyan) do |q|            
-            q.suffix 'Y/N'           
-        end
-        if yes_or_no
-            puts "\n" * 35           
-            birth_year = self.get_birth_year.to_i
-            birth_month = self.get_birth_month.to_i
-            birth_day = self.get_birth_day.to_i
-            verify_date = Date.valid_date?(birth_year,birth_month,birth_day) 
-            # binding.pry       
-            if verify_date
-            user_birthday = "#{birth_year},#{birth_month},#{birth_day}"
-            birthday_fact = Fact.get_date_fact(birth_month,birth_day)
-#GRAB DATE AND RETURN A STRING WITH 'DID YOU KNOW THAT THIS HAPPENED ON YOUR BDAY?' 
-            new_user = User.new
-            new_user.username = new_username
-            new_user.birthday = user_birthday
-            new_user.save 
-            # binding.pry
-            puts "\n" * 35 
-            puts "Alright! Now we can find IceBreakers!".light_yellow
-            puts "\n" * 5 
-            IceBreaker.main
-            else
-            puts "That is an invalid date.".light_yellow
-            puts "Please try again!".light_red
-            self.get_birth_year
-            end
-        else
-            puts "\n" * 35
-            print "It's COOL".light_cyan
-            print " #{new_username}".light_yellow
-            puts ", you can add your birthday later if you want!".light_cyan
-            new_user = User.new
-            new_user.username = new_username
-#STILL NEED TO PERSIST NEW USER
-            puts "\n" * 5
-            IceBreaker.main
-        end    
-    end    
-# LEAVE THIS ALONE
+        birth_day = self.get_birth_day.to_i
+        User.verify_date(birth_year,birth_month,birth_day)
+        user_birthday = "#{birth_year},#{birth_month},#{birth_day}"
+        # binding.pry
+    end
     def self.get_username
         given_username = PROMPT.ask("What do you want your new User Name to be?", required: true)
         confirm_username = PROMPT.yes?("#{given_username.light_green.bold} is what you entered. Are you sure?") do |q|
           q.suffix 'Y/N'
         end
-        if confirm_username 
+        # binding.pry
+        if confirm_username
            if User.find_by(username: given_username) == nil
-                User.create(username: given_username)            
+                User.create(username: given_username)           
             else
                 puts "#{given_username.light_red.bold} is already taken. Please choose a different username."
                  self.get_username 
             end
-        else
+        else 
             self.get_username
         end
     end
-
+# BIRTHDAY INFO
     def self.get_birth_year
-        year_from_user = PROMPT.mask("What year were you born? We'll keep it a secret".light_yellow).to_i
-        if year_from_user < 1940
-            puts "Either that was an invalid entry or you are old as dirt!".light_cyan
-            print " Please try again.".light_red
-            self.get_birth_year
+        year_from_user = PROMPT.ask("What year were you born?".light_yellow, required: true) do |q| 
+            q.validate(/(19|20)\d{2}/, 'The year must be four digits')
+            q.in(1940..Date.today.year, 'The year must not be older than 1940')
         end
-        # binding.pry
-        if year_from_user < Date.today.year && year_from_user.to_s.length == 4
         year_from_user
-        else
-        puts "\n" * 35
-        puts "That is an invalid entry.".light_red
-        print "Please try again."
-        self.get_birth_year           
-        end
     end
-
-
-    def self.get_birth_month
+    def self.get_birth_month    
         puts "\n" * 35
-        user_birth_month = PROMPT.ask('Please enter the month (MM) in which you were born'.light_cyan) do |q|
-            q.in('00-12')
-        end
+        user_birth_month = PROMPT.ask('Please enter the month (MM) in which you were born'.light_cyan, required: true) do |q|
+            q.in('01-12')
+        end      
         user_birth_month
     end
     def self.get_birth_day
-        puts "\n" * 35
-        puts "Sweet, just one more thing".light_yellow
-        user_birthday = PROMPT.ask('Please enter the day (DD) of the you were born'.light_cyan) do |q|
-            q.in('00-31')
+        # puts "\n" * 35
+        user_birth_day = PROMPT.ask('Please enter the day (DD) of the you were born'.light_cyan) do |q|
+            q.in('01-31')
         end
-        user_birthday
+        user_birth_day
     end
-#LEAVE THIS ALONE
+    def self.verify_date(birth_year,birth_month,birth_day) 
+        # puts "\n" * 35                  
+        birthday_valid = Date.valid_date?(birth_year,birth_month,birth_day)
+        # binding.pry
+        if birthday_valid
+            birthday_valid
+        else
+            puts "Hmmm.. that's not right.".light_red
+            puts "Let's try again."
+            User.get_user_birthday
+        end
+    end
+# SET PASSWORD
     def self.set_password
         given_password = PROMPT.mask("Please enter your password".light_yellow, required: true) do |q|
         q.validate(/^(?=.*[a-zA-Z])(?=.*[0-9]).{6,}$/)
         q.messages[:valid?] = 'Your passowrd must be at least 6 characters and include one number and one letter'
       end        
         confirm_password = PROMPT.mask("Please confirm password".light_green, required: true)
+        # binding.pry
         if given_password == confirm_password
+            puts "\n" * 35
             given_password
         else
+            puts "\n" * 35
             puts "Those didn't match. Please try again!".light_red
             self.set_password
+        end
+    end
+
+    #NEED TO PARSE THE FACTS AND PRESENT THE FACT BASED ON THE TYPE OF FACT IT IS.
+    def self.my_icebreakers(current_user)
+        
+        my_icebreakers = current_user.facts.each do |fact|
+          puts "❄" * 95
+          puts fact.text
+          puts "❄" * 95
+          puts "\n" * 5
         end
     end
         

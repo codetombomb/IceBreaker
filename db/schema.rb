@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 20200106210227) do
     t.string  "text"
     t.string  "fact_type"
     t.integer "number"
+    t.string  "month_day"
     t.string  "year"
     t.integer "count"
   end

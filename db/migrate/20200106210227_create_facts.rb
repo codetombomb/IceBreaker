@@ -4,6 +4,7 @@ class CreateFacts < ActiveRecord::Migration[5.0]
       t.string :text
       t.string :fact_type
       t.integer :number
+      t.string :month_day, :default => nil
       t.string :year, :default => nil
       t.integer :count
     end
