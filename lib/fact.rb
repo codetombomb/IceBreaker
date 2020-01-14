@@ -20,6 +20,8 @@ class Fact < ActiveRecord::Base
             end
         fact
     end
+
+
     def self.get_random_fact(fact_type)
         # binding.pry
         response = Unirest.get "https://numbersapi.p.rapidapi.com/random/#{fact_type}?max=20&fragment=true&min=10&json=true",

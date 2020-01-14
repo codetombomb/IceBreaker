@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
         puts "\n" * 35
         new_user.birthday = self.get_user_birthday
         new_user.save
-        new_user
+        @current_user = new_user
     end  
     def self.get_user_birthday
         # puts "\n" * 35           

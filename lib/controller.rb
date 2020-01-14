@@ -1,5 +1,5 @@
 class IceBreaker
-    attr_accessor :current_user
+    # attr_accessor@current_user
                           #WELCOME TO ICEBREAKER!!
 
              ###########   MAIN ICEBREAKER METHODS   ###########
@@ -22,7 +22,7 @@ class IceBreaker
         sign_up = PROMPT.select("SignUP or Exit", %w(SignUP Exit))
         case sign_up
         when "SignUP"
-            @current_user = User.create_user 
+            @@current_user = User.create_user 
             puts "\n" * 35           
             yes_or_no = PROMPT.yes?("We can find IceBreakers about a date in history.\n\s Would you like to try with your birthday?\n\n\n".light_cyan) do |q|            
                 q.suffix 'Y/N'
@@ -30,9 +30,9 @@ class IceBreaker
                 if yes_or_no
                     puts "\n" * 35  
                     puts "❄" * 119       
-                    fact = Fact.get_bday_fact(@current_user.birthday)
-                    print "On #{Date::MONTHNAMES[@current_user.birthday.split(',')[1].to_i].light_cyan}"
-                    print "\s#{@current_user.birthday.split(',')[2].to_i},\s".light_cyan
+                    fact = Fact.get_bday_fact(@@current_user.birthday)
+                    print "On #{Date::MONTHNAMES[@@current_user.birthday.split(',')[1].to_i].light_cyan}"
+                    print "\s#{@@current_user.birthday.split(',')[2].to_i},\s".light_cyan
                     print "#{fact.year.light_cyan},\s\n"
                     puts "#{fact.text}"
                     puts "❄" * 119
@@ -41,9 +41,9 @@ class IceBreaker
                     ", %W(Save Main))
                     case save_fact
                     when "Save"
-                        save_fact = FactUser.new(user_id: @current_user.id, fact_id: fact.id )
-                        save_fact.save
-                        binding.pry
+                        # binding.pry                        
+                        FactUser.save_icebreaker(@@current_user.id,fact.id)
+                        # binding.pry
                         IceBreaker.main
                     else "Main"
                         IceBreaker.main
@@ -61,12 +61,12 @@ class IceBreaker
 
     #set user_logged_in = true
     def self.login
-        find_user = PROMPT.ask("What is your username?".light_cyan)
-        @current_user = User.find_by(username: find_user)
-        enter_password = PROMPT.mask('password:', echo: true)
+        find_user = PROMPT.ask("What is your username?".light_cyan, required: true)
+        @@current_user = User.find_by(username: find_user)
+        enter_password = PROMPT.mask('password:', echo: true,required: true)
         # binding.pry
-        if enter_password == @current_user.password
-            @current_user
+        if enter_password == @@current_user.password
+            @@current_user
             self.main
         else
             puts "\n" * 35
@@ -86,19 +86,26 @@ class IceBreaker
             case menu_selection
             when "ShowAll"
                 puts "\n" * 30
-                my_icebreakers = User.my_icebreakers(@current_user)
-                menu_selection = PROMPT.select('Select from the following options.', %w(IceBreaker_Details Back))
+                binding.pry
+                IceBreaker.display(@@current_user.facts)
+                # my_icebreakers = User.my_icebreakers(@@current_user)
+                menu_selection = PROMPT.select('Select from the following options.', %w( Back))
                 case menu_selection
-                when "IceBreaker_Details"
-                    binding.pry
-                    #SHOW DETAILS OF ICEBREAKER
-                else "Back"
+                when "Back"
                     IceBreaker.main
                 end
             when "DeleteAll"
                 binding.pry
-                @current_user.facts.delete
+                are_you_sure = PROMPT.yes?('Are you sure you want to delete all?') do |q|
+                q.suffix 'Y/N'
+                    end
+                if are_you_sure
+                @@current_user.facts.delete_all
+                IceBreaker.main
                 binding.pry
+                else
+                  IceBreaker.main
+                end
             else "Main"
                 IceBreaker.main
             end
@@ -111,15 +118,20 @@ class IceBreaker
              requested_type = PROMPT.select("Please select a category.", %w(Trivia Maths Date Year))
             case requested_type
             when "Trivia"
-                trivia_fact = Fact.get_random_fact(requested_type.downcase)
+                trivia_fact = [Fact.get_random_fact(requested_type.downcase)]
+                # binding.pry
                 IceBreaker.display(trivia_fact)
+                # binding.pry
                 save_or_exit = PROMPT.select("Save or exit?", %w(Save Exit))
                 case save_or_exit
                 when "Save"
-                    FactUser.save_icebreaker(@current_user.id,trivia_fact.id)
                 # binding.pry
+                save_fact = FactUser.save_icebreaker(@@current_user.id,trivia_fact[0].id)
+                @@current_user.facts << trivia_fact
+                # binding.pry
+                IceBreaker.main
                 else "Exit"
-                    IceBreaker.main
+                IceBreaker.main
                 end
             when "Maths"
                 Fact.get_math_fact
@@ -132,7 +144,7 @@ class IceBreaker
         when "EditMyInfo"
             # Given the option to change my user information USERNAME, PASSWORD, AND BIRTHDAY
         when "LogOut"
-            @current_user = nil
+            @@current_user = nil
             IceBreaker.main
             # makes @user_logged_in = false            
         else "Exit"
@@ -166,17 +178,26 @@ class IceBreaker
         puts "\n" * 10 
     end
 
+
+    #MUST PASS IN ARRAY
     def self.display(facts)
-        facts_to_a = [facts]
         # binding.pry
-        facts_to_a.each do |fact|
+        facts.each do |fact|
             if fact.fact_type == "trivia" 
-                puts "The number#{fact.number} refers to #{fact.text}"
+                puts "❄" * 119
+                print "The number".light_cyan
+                puts "\s#{fact.number}".light_cyan
+                puts "refers to #{fact.text}"
+                puts "❄" * 119
+                puts "\n" * 1
             elsif fact.fact_type == "date"
-                print "On #{Date::MONTHNAMES[@current_user.birthday.split(',')[1].to_i].light_cyan}"
-                print "\s#{@current_user.birthday.split(',')[2].to_i},\s".light_cyan
+                puts "❄" * 119
+                print "On #{Date::MONTHNAMES[@@current_user.birthday.split(',')[1].to_i].light_cyan}"
+                print "\s#{@@current_user.birthday.split(',')[2].to_i},\s".light_cyan
                 print "#{fact.year.light_cyan},\s\n"
                 puts "#{fact.text}"
+                puts "❄" * 119
+                puts "\n" * 1
             end
             # binding.pry
         end
