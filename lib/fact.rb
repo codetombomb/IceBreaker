@@ -9,6 +9,7 @@ class Fact < ActiveRecord::Base
         "X-RapidAPI-Key" => "03ad68a3d9msh715db69b24278b8p1c06acjsncb379bcf54f4"
         }
         date_fact = Fact.find_or_create_by(text: response.body["text"]) do |fact|
+            binding.pry
             fact.text = response.body["text"]
             fact.fact_type = response.body["type"]
             fact.number = response.body["number"]

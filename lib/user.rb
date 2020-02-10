@@ -9,30 +9,24 @@ class User < ActiveRecord::Base
     def self.create_user
         new_user = self.get_username
         new_user.password = self.set_password
-        # binding.pry
         puts "\n" * 35
         new_user.birthday = self.get_user_birthday
         new_user.save
         @current_user = new_user
     end  
-    def self.get_user_birthday
-        # puts "\n" * 35           
+    def self.get_user_birthday           
         birth_year = self.get_birth_year.to_i
-        # binding.pry
         birth_month = self.get_birth_month.to_i
-        # binding.pry
         puts "\n" * 35
         birth_day = self.get_birth_day.to_i
         User.verify_date(birth_year,birth_month,birth_day)
         user_birthday = "#{birth_year},#{birth_month},#{birth_day}"
-        # binding.pry
     end
     def self.get_username
         given_username = PROMPT.ask("What do you want your new User Name to be?", required: true)
         confirm_username = PROMPT.yes?("#{given_username.light_green.bold} is what you entered. Are you sure?") do |q|
           q.suffix 'Y/N'
         end
-        # binding.pry
         if confirm_username
            if User.find_by(username: given_username) == nil
                 User.create(username: given_username)           
@@ -60,16 +54,13 @@ class User < ActiveRecord::Base
         user_birth_month
     end
     def self.get_birth_day
-        # puts "\n" * 35
         user_birth_day = PROMPT.ask('Please enter the day (DD) of the you were born'.light_cyan) do |q|
             q.in('01-31')
         end
         user_birth_day
     end
-    def self.verify_date(birth_year,birth_month,birth_day) 
-        # puts "\n" * 35                  
+    def self.verify_date(birth_year,birth_month,birth_day)                  
         birthday_valid = Date.valid_date?(birth_year,birth_month,birth_day)
-        # binding.pry
         if birthday_valid
             birthday_valid
         else
@@ -85,7 +76,6 @@ class User < ActiveRecord::Base
         q.messages[:valid?] = 'Your passowrd must be at least 6 characters and include one number and one letter'
       end        
         confirm_password = PROMPT.mask("Please confirm password".light_green, required: true)
-        # binding.pry
         if given_password == confirm_password
             puts "\n" * 35
             given_password
